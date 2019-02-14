@@ -9,7 +9,8 @@ from fit import *
 import matplotlib
 matplotlib.use('TkAgg')
 import numpy as np
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.pyplot import savefig, gcf
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
 #======================================
 
@@ -23,6 +24,7 @@ class TelaInicial():
     def __init__(self, janela):
         janela.title("Furo Pit")
         self.janela = janela
+
         self.frm_upper = tk.Frame(janela)
         self.frm_down = tk.Frame(janela)
 
@@ -75,27 +77,29 @@ class TelaPontos():
         self.janela = janela
         self.jAnterior = jAnterior
 
+        self.px = []
+        self.py = []
+        self.sx = []
+        self.sy = []
 
         self.frm_upper = tk.Frame(janela)
         self.frm_down = tk.Frame(janela)
 
         self.frm_radio = tk.Frame(self.frm_upper)
 
-        self.btn_fit = tk.Button(self.frm_down, text="Ajustar", command= self.proxJanelaGrafico)
+        self.btn_fit = tk.Button(self.frm_down, text="Ok", command= self.radio_choice)
         self.btn_cancel = tk.Button(self.frm_down, text="Voltar", command = self.voltar)
         self.lb_pontos = tk.Label(self.frm_upper, text="Pontos")
         self.lb_filename = tk.Label(self.frm_upper, text="None")
 
-        self.btn_arquivo = tk.Button(self.frm_radio, text="Arquivo", command=self.get_File)
-        self.btn_text = tk.Button(self.frm_radio, text="Digitar", command=self.get_by_text)
-        self.btn_text.config(state=tk.DISABLED)
-
         self.opt = tk.IntVar()
 
-        self.radio_escolha_arquivo = tk.Radiobutton(self.frm_radio, variable=self.opt, value=1,command=self.radio_choice, text="Arquivo")
-        self.radio_escolha_arquivo.select()
-        self.radio_escolha_texto = tk.Radiobutton(self.frm_radio, variable=self.opt, value=2,command=self.radio_choice, text="Texto")
+        self.radio_escolha_arquivo = tk.Radiobutton(self.frm_radio, variable=self.opt, value=1, text="Arquivo")
         
+        self.radio_escolha_texto = tk.Radiobutton(self.frm_radio, variable=self.opt, value=2, text="Texto")
+        self.radio_inserir_pontos = tk.Radiobutton(self.frm_radio, variable=self.opt, value=3, text="Inserir Pontos")
+        self.radio_inserir_pontos.select()
+
         self.frm_upper.pack()
         self.frm_down.pack(side=tk.BOTTOM)
 
@@ -105,10 +109,9 @@ class TelaPontos():
         self.lb_pontos.pack(side=tk.LEFT)
         self.lb_filename.pack(side=tk.RIGHT)
 
-        self.btn_arquivo.grid(row=0, column=4)
-        self.btn_text.grid(row=1, column=4)
-        self.radio_escolha_arquivo.grid(row=0, column=3)
-        self.radio_escolha_texto.grid(row=1, column=3)
+        self.radio_inserir_pontos.grid(row=0, column=3)
+        self.radio_escolha_arquivo.grid(row=1, column=3)
+        self.radio_escolha_texto.grid(row=2, column=3)
 
         self.btn_fit.grid(row=4, column=4)
         self.btn_cancel.grid(row=4, column=0)
@@ -124,10 +127,9 @@ class TelaPontos():
         self.btn_fit.grid_forget()
         self.btn_cancel.grid_forget()
 
-        self.btn_arquivo.grid_forget()
-        self.btn_text.grid_forget()
         self.radio_escolha_arquivo.grid_forget()
         self.radio_escolha_texto.grid_forget()
+        self.radio_inserir_pontos.grid_forget()
 
         self.lb_pontos.pack_forget()
         self.lb_filename.pack_forget()
@@ -148,10 +150,9 @@ class TelaPontos():
         self.lb_pontos.pack(side=tk.LEFT)
         self.lb_filename.pack(side=tk.RIGHT)
 
-        self.btn_arquivo.grid(row=0, column=4)
-        self.btn_text.grid(row=1, column=4)
-        self.radio_escolha_arquivo.grid(row=0, column=3)
-        self.radio_escolha_texto.grid(row=1, column=3)
+        self.radio_inserir_pontos.grid(row=0, column=3)
+        self.radio_escolha_arquivo.grid(row=1, column=3)
+        self.radio_escolha_texto.grid(row=2, column=3)
 
         self.btn_fit.grid(row=4, column=4)
         self.btn_cancel.grid(row=4, column=0)
@@ -162,8 +163,6 @@ class TelaPontos():
         TelaGrafico(self.janela, self, self.px, self.sx, self.py, self.sy)
 
     #==================================================================
-    
-    
     def get_by_text(self):
         top_txt = tk.Toplevel()
         top_txt.title = "Pontos"
@@ -181,24 +180,94 @@ class TelaPontos():
             self.txt_pontos = txt_entry.get("1.0", tk.END)
             top_txt.destroy()
             self.px, self.py, self.sx, self.sy = ler_excel(self.txt_pontos)
+            self.proxJanelaGrafico()
 
         tk.Button(frm_btn, text="OK", command=get_pontos).pack(side=tk.RIGHT)
     
+    #==================================================================
+    # impar = X, par = Y
+
+    #def mostra_novo(janela):
+    #    append_labels(janela)
+
+    
+    def append_labels(self, janela):
+
+        self.labels.append(tk.Label(janela, text="X"))
+        self.labels[-1].grid(row=self.tam, column =0) 
+        self.labels.append(tk.Label(janela, text="Y"))
+        self.labels[-1].grid(row=self.tam, column =2)
+        self.labels.append(tk.Label(janela, text="Erro X"))
+        self.labels[-1].grid(row=self.tam, column =4) 
+        self.labels.append(tk.Label(janela, text="Erro Y"))
+        self.labels[-1].grid(row=self.tam, column =6)
+
+
+        self.inserts.append(tk.Entry(janela, width=10))
+        self.inserts[-1].grid(row=self.tam, column =1)
+        self.inserts.append(tk.Entry(janela, width=10))
+        self.inserts[-1].grid(row=self.tam, column =3)
+        self.inserts.append(tk.Entry(janela, width=10))
+        self.inserts[-1].grid(row=self.tam, column =5)
+        self.inserts.append(tk.Entry(janela, width=10))
+        self.inserts[-1].grid(row=self.tam, column =7)
+
+        
+        self.tam += 1
+
+    
+    def salvar_pontos(self):
+
+        for i in range(0, len(self.inserts), 4):
+            self.px.append(float(self.inserts[i].get()))
+            self.py.append(float(self.inserts[i+1].get()))
+            self.sx.append(float(self.inserts[i+2].get()))
+            self.sy.append(float(self.inserts[i+3].get()))
+
+        self.top_pontos.destroy()
+
+        self.proxJanelaGrafico()
+
+
+    def janela_Inserir_Pontos(self):
+        self.top_pontos = tk.Toplevel()
+        self.top_pontos.title = "Pontos"
+        self.tam=0
+        self.labels = []
+        self.inserts = []
+
+        frame_pontos = tk.Frame(self.top_pontos, height=300, width=500, bd=10)
+
+        btn_add = tk.Button(self.top_pontos, text="Adicionar ponto")
+        btn_add["command"] = partial(self.append_labels, frame_pontos)
+        
+
+        btn_ok = tk.Button(self.top_pontos, text="Ok", command=self.salvar_pontos)
+
+
+        frame_pontos.pack(side=tk.TOP)
+        btn_add.pack(side = tk.RIGHT)
+        btn_ok.pack(side=tk.LEFT)
+
+        self.append_labels(frame_pontos)
+
 
     #==================================================================
     def radio_choice(self):
         if(self.opt.get()==1):
-            self.btn_arquivo.config(state=tk.NORMAL)
-            self.btn_text.config(state=tk.DISABLED)
+            self.get_File()
         elif(self.opt.get()==2):
-            self.btn_arquivo.config(state=tk.DISABLED)
-            self.btn_text.config(state=tk.NORMAL)
+            self.get_by_text()
+        elif(self.opt.get()==3):
+            self.janela_Inserir_Pontos()
 
     #==================================================================
     def get_File(self):
         filename = filedialog.askopenfilename()
         if(filename!=""):
-            self.px, self.py, self.sx, self.sy = ler_csv(filename)    
+            self.px, self.py, self.sx, self.sy = ler_csv(filename)
+
+        self.proxJanelaGrafico()    
 
 
 #==================================================================
@@ -215,7 +284,7 @@ class TelaGrafico():
         self.frm_buttons = tk.Frame(janela, bd=10)
 
         self.btn_return = tk.Button(self.frm_buttons, text="Voltar", command=self.voltar)
-        self.btn_plot = tk.Button(self.frm_buttons, text="Salvar")
+        self.btn_plot = tk.Button(self.frm_buttons, text="Salvar", command = self.salvar_imagem)
 
         #=====Botoes de ajuste=====
         #=Ainda não estão funcionais
@@ -242,6 +311,8 @@ class TelaGrafico():
         #=função simples para plotar as duas variáveis. "bo" é o tipo de "linha"
         self.a.plot(px, py, "bo")
 
+        
+
         #=Um "canvas" (tela de pintura) precisa ser feito no tkinter para desenhar o gráfico.
         #=aparentemente, esse método FigureCanvastkAgg cria essa "tela" e assoscia ela ao
         #=tkinter. Ela passa com parâmetro a figura que será desenhada e em qual janela,
@@ -249,6 +320,10 @@ class TelaGrafico():
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.frm_graphic)
         #=aparentemente é o que posiciona a imagem no frame, assim como fazemos
         #=com os widgets na janela.
+
+        #self.saved_figure = gcf()
+
+
         self.canvas.get_tk_widget().pack()
         #=faz o desenho do plot (seria interessante testar o código sem isso e ver se
         # simplesmente não vai aparecer o plot)
@@ -292,23 +367,37 @@ class TelaGrafico():
     #==================================================================
 
     def curve_plot(self, px, err_x, py, err_y, Funcao):
-        popt, pcov = Funcao(px, py, err_x, err_y).obter_coeficientes()
 
-        def linear(pontos, a, b):
-            return list(map(lambda x : a*x + b, pontos))
+        funct = Funcao( np.array(px), np.array(py), np.array(err_x), np.array(err_y))
+        popt, pcov = funct.obter_coeficientes()
 
-        x_teste = range(0,10)
-
+        x_teste = range(int(px[0]),int(px[len(px)-1])+1)
         self.limpar_grafico()
 
         self.fig = Figure(figsize=(5,3))
         self.a = self.fig.add_subplot(111)
         self.a.plot(px, py, "bo")
-        self.a.plot(x_teste, linear(x_teste, popt[0], popt[1]), "k")
+
+        def gerar_legenda():
+            legenda = ""
+            for coef, letra in zip(popt, ['A','B','C','D']):
+                legenda += letra + f" = {coef}\n"
+            return legenda
+
+        self.a.plot(x_teste, funct.funcao(x_teste, popt[0], popt[1]), "k", 
+                    label = gerar_legenda())
+        self.a.legend()
+
+        #self.saved_figure = gcf()
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.frm_graphic)
         self.canvas.get_tk_widget().pack()
         self.canvas.draw()
+
+    def salvar_imagem(self):
+        filename = filedialog.asksaveasfilename()
+        self.fig.savefig(filename)
+
 
 janela = tk.Tk()
 TelaInicial(janela)
