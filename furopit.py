@@ -16,7 +16,8 @@ from matplotlib.figure import Figure
 
 
 #==================================================================
-#=
+#=Tela inicial do programa, onde é selecionada a opção de
+#=criar um novo ajuste ou de verificar os ajustes salvos.
 #==================================================================
 class TelaInicial():
 
@@ -25,6 +26,7 @@ class TelaInicial():
         janela.title("Furo Pit")
         self.janela = janela
 
+        #=Criação e posicionamento de elementos da tela
         self.frm_upper = tk.Frame(janela)
         self.frm_down = tk.Frame(janela)
 
@@ -42,11 +44,14 @@ class TelaInicial():
         self.btn_sair.pack(side=tk.BOTTOM)
 
     #==================================================================
+    #=Passa para a próxima janela, limpando a anterior antes
     def proxJanelaNovo(self):
         self.limparJanela()
         TelaPontos(self.janela, self)
 
     #==================================================================
+    #= Caso seja necessário retornar a essa janela, os objetos devem ser
+    #= redesenhados.
     def redesenhar(self):
         self.frm_upper.grid()
         self.frm_down.grid()
@@ -57,6 +62,7 @@ class TelaInicial():
         self.btn_sair.pack(side=tk.BOTTOM)
 
     #==================================================================
+    #= Caso seja necessário sair dessa janela, os objetos devem ser apagados.
     def limparJanela(self):
 
         self.lb_title.grid_forget()
@@ -68,7 +74,11 @@ class TelaInicial():
         self.frm_down.grid_forget()
 
 #==================================================================
-#=
+#=Tela utilizada para a inserção de pontos.
+#=Nela existem 3 alternativas:
+#==Inserção manual, onde o usuário digita todos os pontos e erros
+#==Inserção através de um arquivo .csv
+#==Inserção através de um copy-paste a partir de um arquivo excel.
 #==================================================================
 class TelaPontos():
 
@@ -77,11 +87,14 @@ class TelaPontos():
         self.janela = janela
         self.jAnterior = jAnterior
 
+        # Essas são as listas onde ficarão todos os pontos que serão
+        # passados para a classe de ajuste de curvas.
         self.px = []
         self.py = []
         self.sx = []
         self.sy = []
 
+        # Objetos da tela
         self.frm_upper = tk.Frame(janela)
         self.frm_down = tk.Frame(janela)
 
@@ -158,11 +171,15 @@ class TelaPontos():
         self.btn_cancel.grid(row=4, column=0)
 
     #==================================================================
+    #=Função para limpar a janela atual e chamar a janela dos gráficos.
+    #=Os pontos lidos são passados para o construtor
     def proxJanelaGrafico(self):
         self.limparJanela()
         TelaGrafico(self.janela, self, self.px, self.sx, self.py, self.sy)
 
     #==================================================================
+    #=Janela da caixa de texto. Nela, existe uma caixa de texto para onde
+    #=os pontos devem ser copiados no formato x - erro x - y - erro y
     def get_by_text(self):
         top_txt = tk.Toplevel()
         top_txt.title = "Pontos"
@@ -179,18 +196,13 @@ class TelaPontos():
         def get_pontos():
             self.txt_pontos = txt_entry.get("1.0", tk.END)
             top_txt.destroy()
-            self.px, self.py, self.sx, self.sy = ler_excel(self.txt_pontos)
+            self.px, self.py, self.sx, self.sy = ler_excel(self.txt_pontos) #método ler_excel do módulo reader
             self.proxJanelaGrafico()
 
         tk.Button(frm_btn, text="OK", command=get_pontos).pack(side=tk.RIGHT)
     
     #==================================================================
-    # impar = X, par = Y
-
-    #def mostra_novo(janela):
-    #    append_labels(janela)
-
-    
+    # Função para criar um novo conjunto de entradas para os pontos e erros
     def append_labels(self, janela):
 
         self.labels.append(tk.Label(janela, text="X"))
@@ -215,8 +227,16 @@ class TelaPontos():
         
         self.tam += 1
 
-    
+    #======================================================
+    #= Função que itera pelas caixas de texto recebidas
+    #= e passa todos os pontos e erros para as listas
+    #= de pontos e erros
     def salvar_pontos(self):
+
+        self.px = []
+        self.py = []
+        self.sx = []
+        self.sy = [] 
 
         for i in range(0, len(self.inserts), 4):
             self.px.append(float(self.inserts[i].get()))
@@ -229,6 +249,8 @@ class TelaPontos():
         self.proxJanelaGrafico()
 
 
+    #======================================================
+    #= Janela onde os pontos serão inseridos manualmente
     def janela_Inserir_Pontos(self):
         self.top_pontos = tk.Toplevel()
         self.top_pontos.title = "Pontos"
@@ -239,11 +261,9 @@ class TelaPontos():
         frame_pontos = tk.Frame(self.top_pontos, height=300, width=500, bd=10)
 
         btn_add = tk.Button(self.top_pontos, text="Adicionar ponto")
-        btn_add["command"] = partial(self.append_labels, frame_pontos)
-        
+        btn_add["command"] = partial(self.append_labels, frame_pontos)        
 
         btn_ok = tk.Button(self.top_pontos, text="Ok", command=self.salvar_pontos)
-
 
         frame_pontos.pack(side=tk.TOP)
         btn_add.pack(side = tk.RIGHT)
@@ -253,6 +273,8 @@ class TelaPontos():
 
 
     #==================================================================
+    #= Função que define qual método de inserção será chamado, depenendo
+    #= do radio button selecionado
     def radio_choice(self):
         if(self.opt.get()==1):
             self.get_File()
@@ -262,9 +284,16 @@ class TelaPontos():
             self.janela_Inserir_Pontos()
 
     #==================================================================
+    #= Função para o método através do arquivo csv. Abre uma caixa que 
+    #= solicita um arquivo e passa seu caminho para a função ler_csv
+    #= do módulo reader.
     def get_File(self):
         filename = filedialog.askopenfilename()
         if(filename!=""):
+            self.px = []
+            self.py = []
+            self.sx = []
+            self.sy = []
             self.px, self.py, self.sx, self.sy = ler_csv(filename)
 
         self.proxJanelaGrafico()    
@@ -291,7 +320,7 @@ class TelaGrafico():
         self.btn_linear = tk.Button(self.frm_buttons, text="Linear")
         self.btn_linear["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_linear)
         self.btn_expo = tk.Button(self.frm_buttons, text="Exponencial")
-        self.btn_expo["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_linear)
+        self.btn_expo["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_exponencial)
         self.btn_quadra = tk.Button(self.frm_buttons, text="Quadrática")
         self.btn_quadra["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_linear)
         self.btn_cube = tk.Button(self.frm_buttons, text="Cúbica")
@@ -321,16 +350,11 @@ class TelaGrafico():
         #=aparentemente é o que posiciona a imagem no frame, assim como fazemos
         #=com os widgets na janela.
 
-        #self.saved_figure = gcf()
-
-
         self.canvas.get_tk_widget().pack()
         #=faz o desenho do plot (seria interessante testar o código sem isso e ver se
         # simplesmente não vai aparecer o plot)
         self.canvas.draw()
 
-
-        #self.frm_graphic.grid(row=0, column=0)
         self.frm_graphic.pack(side=tk.TOP)
         self.frm_buttons.pack(side=tk.BOTTOM)
 
@@ -369,7 +393,7 @@ class TelaGrafico():
     def curve_plot(self, px, err_x, py, err_y, Funcao):
 
         funct = Funcao( np.array(px), np.array(py), np.array(err_x), np.array(err_y))
-        popt, pcov = funct.obter_coeficientes()
+        popt, pcov = funct.gerar_qui_quadrado()
 
         x_teste = range(int(px[0]),int(px[len(px)-1])+1)
         self.limpar_grafico()
@@ -382,13 +406,12 @@ class TelaGrafico():
             legenda = ""
             for coef, letra in zip(popt, ['A','B','C','D']):
                 legenda += letra + f" = {coef}\n"
+            #legenda += f"Q² = {pcov}"
             return legenda
 
-        self.a.plot(x_teste, funct.funcao(x_teste, popt[0], popt[1]), "k", 
+        self.a.plot(x_teste, funct.funcao(popt, x_teste), "k", 
                     label = gerar_legenda())
         self.a.legend()
-
-        #self.saved_figure = gcf()
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.frm_graphic)
         self.canvas.get_tk_widget().pack()

@@ -1,4 +1,5 @@
 from pandas import read_csv
+import numpy as np
 
 #Padrão:
 #X - erro x - y - erro y
@@ -21,9 +22,9 @@ def ler_excel(texto):
     for i in l1:
         l2 = i.split()
         if(len(l2) != 0):
-            x.append(l2[0])
-            y.append(l2[2])
-            err_x.append(l2[1])
-            err_y.append(l2[3])
+            x.append(float(l2[0]))
+            y.append(float(l2[2]))
+            err_x.append(float(l2[1]))
+            err_y.append(float(l2[3]))
     return x, y, err_x, err_y
 
