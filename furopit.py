@@ -1,4 +1,4 @@
-import tkinter as tk 
+import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 #======================================
@@ -31,7 +31,6 @@ class TelaInicial():
         self.frm_down = tk.Frame(janela)
 
         self.lb_title = tk.Label(self.frm_upper, text="Furo Pit")
-        self.btn_anteriores = tk.Button(self.frm_down, text="Últimos ajustes")
         self.btn_plotar = tk.Button(self.frm_down, text="Novo ajuste", command=self.proxJanelaNovo)
         self.btn_sair = tk.Button(self.frm_down, text="Sair", command=self.janela.destroy)
 
@@ -39,7 +38,6 @@ class TelaInicial():
         self.frm_down.grid()
 
         self.lb_title.grid()
-        self.btn_anteriores.pack(side=tk.TOP)
         self.btn_plotar.pack(side=tk.TOP)
         self.btn_sair.pack(side=tk.BOTTOM)
 
@@ -57,7 +55,6 @@ class TelaInicial():
         self.frm_down.grid()
 
         self.lb_title.grid()
-        self.btn_anteriores.pack(side=tk.TOP)
         self.btn_plotar.pack(side=tk.TOP)
         self.btn_sair.pack(side=tk.BOTTOM)
 
@@ -66,7 +63,6 @@ class TelaInicial():
     def limparJanela(self):
 
         self.lb_title.grid_forget()
-        self.btn_anteriores.pack_forget()
         self.btn_plotar.pack_forget()
         self.btn_sair.pack_forget()
 
@@ -197,7 +193,10 @@ class TelaPontos():
             self.txt_pontos = txt_entry.get("1.0", tk.END)
             top_txt.destroy()
             self.px, self.py, self.sx, self.sy = ler_excel(self.txt_pontos) #método ler_excel do módulo reader
-            self.proxJanelaGrafico()
+            if(self.px==[0] and self.py==[0] and self.sx==[0] and self.sy==[0]):
+                tk.messagebox.showwarning("Erro!", "Parâmetros não reconhecidos.")
+            else:
+                self.proxJanelaGrafico()
 
         tk.Button(frm_btn, text="OK", command=get_pontos).pack(side=tk.RIGHT)
     
@@ -239,14 +238,18 @@ class TelaPontos():
         self.sy = [] 
 
         for i in range(0, len(self.inserts), 4):
-            self.px.append(float(self.inserts[i].get()))
-            self.py.append(float(self.inserts[i+1].get()))
-            self.sx.append(float(self.inserts[i+2].get()))
-            self.sy.append(float(self.inserts[i+3].get()))
+            self.px.append(float(self.inserts[i].get().replace(',','.')))
+            self.py.append(float(self.inserts[i+1].get().replace(',','.')))
+            self.sx.append(float(self.inserts[i+2].get().replace(',','.')))
+            self.sy.append(float(self.inserts[i+3].get().replace(',','.')))
 
+
+        if(self.px==[0] and self.py==[0] and self.sx==[0] and self.sy==[0]):
+            tk.messagebox.showwarning("Erro!", "Parâmetros não reconhecidos.")
+        else:
+            self.proxJanelaGrafico()
+        
         self.top_pontos.destroy()
-
-        self.proxJanelaGrafico()
 
 
     #======================================================
@@ -261,6 +264,7 @@ class TelaPontos():
         frame_pontos = tk.Frame(self.top_pontos, height=300, width=500, bd=10)
 
         btn_add = tk.Button(self.top_pontos, text="Adicionar ponto")
+        btn_cancel = tk.Button(self.top_pontos, text="Cancelar", command=self.top_pontos.destroy)
         btn_add["command"] = partial(self.append_labels, frame_pontos)        
 
         btn_ok = tk.Button(self.top_pontos, text="Ok", command=self.salvar_pontos)
@@ -268,6 +272,7 @@ class TelaPontos():
         frame_pontos.pack(side=tk.TOP)
         btn_add.pack(side = tk.RIGHT)
         btn_ok.pack(side=tk.LEFT)
+        btn_cancel.pack(side=tk.LEFT)
 
         self.append_labels(frame_pontos)
 
@@ -288,15 +293,14 @@ class TelaPontos():
     #= solicita um arquivo e passa seu caminho para a função ler_csv
     #= do módulo reader.
     def get_File(self):
-        filename = filedialog.askopenfilename()
-        if(filename!=""):
+        filename = filedialog.askopenfilename(filetypes = [("arquivo csv","*.csv")])
+        if filename:
             self.px = []
             self.py = []
             self.sx = []
             self.sy = []
             self.px, self.py, self.sx, self.sy = ler_csv(filename)
-
-        self.proxJanelaGrafico()    
+            self.proxJanelaGrafico() 
 
 
 #==================================================================
@@ -322,18 +326,18 @@ class TelaGrafico():
         self.btn_expo = tk.Button(self.frm_buttons, text="Exponencial")
         self.btn_expo["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_exponencial)
         self.btn_quadra = tk.Button(self.frm_buttons, text="Quadrática")
-        self.btn_quadra["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_linear)
+        self.btn_quadra["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_quadrada)
         self.btn_cube = tk.Button(self.frm_buttons, text="Cúbica")
-        self.btn_cube["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_linear)
+        self.btn_cube["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_cubica)
         self.btn_racio = tk.Button(self.frm_buttons, text="Racional")
-        self.btn_racio["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_linear)
+        self.btn_racio["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_racional)
         #==========================
 
         #======================================================
         #=Código para desenhar o gráfico no frame da janela
         #
         #=Primeira linha cria a figura onde o plot será feito
-        self.fig = Figure(figsize=(5,3))
+        self.fig = Figure(figsize=(10,5))
         #=Não sei bem o que o add_subplot faz ainda, mas parece que é algum tipo
         #=de "preparação" pro plot ser feito em uma variável
         self.a = self.fig.add_subplot(111)
@@ -392,26 +396,37 @@ class TelaGrafico():
 
     def curve_plot(self, px, err_x, py, err_y, Funcao):
 
-        funct = Funcao( np.array(px), np.array(py), np.array(err_x), np.array(err_y))
-        popt, pcov = funct.gerar_qui_quadrado()
+        print(px, py)
 
-        x_teste = range(int(px[0]),int(px[len(px)-1])+1)
+        funct = Funcao( np.array(px), np.array(py), np.array(err_x), np.array(err_y))
+        popt, pcov, qui_quadrado = funct.gerar_qui_quadrado()
+
+        x_teste = range(int(px.min()),int(px.max())+1)
+        
         self.limpar_grafico()
 
-        self.fig = Figure(figsize=(5,3))
+        self.fig = Figure(figsize=(10,5))
         self.a = self.fig.add_subplot(111)
-        self.a.plot(px, py, "bo")
 
         def gerar_legenda():
             legenda = ""
-            for coef, letra in zip(popt, ['A','B','C','D']):
-                legenda += letra + f" = {coef}\n"
-            #legenda += f"Q² = {pcov}"
+            for coef, err_coef, letra in zip(popt, pcov, ['A','B','C','D']):
+                legenda += letra + f" = {coef} +/- {err_coef}\n"
+            legenda += f"Q² = {qui_quadrado}"
             return legenda
+
+        print(x_teste, funct.funcao(popt, x_teste))
 
         self.a.plot(x_teste, funct.funcao(popt, x_teste), "k", 
                     label = gerar_legenda())
-        self.a.legend()
+
+        self.a.errorbar(px, py, yerr=2*np.array(err_y), fmt='o' )
+        #self.a.plot(px, py, "bo")
+
+
+        
+
+        self.a.legend(fontsize='x-small')
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.frm_graphic)
         self.canvas.get_tk_widget().pack()
