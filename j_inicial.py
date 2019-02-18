@@ -1,5 +1,6 @@
-import tkinter as tk
-from tkinter import ttk
+# import tkinter as tk
+from tkinter import Frame, Label, Button, TOP, BOTTOM
+# from tkinter import ttk
 #======================================
 from j_pontos import TelaPontos
 
@@ -15,19 +16,19 @@ class TelaInicial():
         self.janela = janela
 
         #=Criação e posicionamento de elementos da tela
-        self.frm_upper = tk.Frame(janela)
-        self.frm_down = tk.Frame(janela)
+        self.frm_upper = Frame(janela)
+        self.frm_down = Frame(janela)
 
-        self.lb_title = tk.Label(self.frm_upper, text="Furo Pit")
-        self.btn_plotar = tk.Button(self.frm_down, text="Novo ajuste", command=self.proxJanelaNovo)
-        self.btn_sair = tk.Button(self.frm_down, text="Sair", command=self.janela.destroy)
+        self.lb_title = Label(self.frm_upper, text="Furo Pit")
+        self.btn_plotar = Button(self.frm_down, text="Novo ajuste", command=self.proxJanelaNovo)
+        self.btn_sair = Button(self.frm_down, text="Sair", command=self.janela.destroy)
 
         self.frm_upper.grid()
         self.frm_down.grid()
 
         self.lb_title.grid()
-        self.btn_plotar.pack(side=tk.TOP)
-        self.btn_sair.pack(side=tk.BOTTOM)
+        self.btn_plotar.pack(side=TOP)
+        self.btn_sair.pack(side=BOTTOM)
 
     #==================================================================
     #=Passa para a próxima janela, limpando a anterior antes
@@ -43,8 +44,8 @@ class TelaInicial():
         self.frm_down.grid()
 
         self.lb_title.grid()
-        self.btn_plotar.pack(side=tk.TOP)
-        self.btn_sair.pack(side=tk.BOTTOM)
+        self.btn_plotar.pack(side=TOP)
+        self.btn_sair.pack(side=BOTTOM)
 
     #==================================================================
     #= Caso seja necessário sair dessa janela, os objetos devem ser apagados.

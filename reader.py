@@ -1,5 +1,5 @@
 from pandas import read_csv
-import numpy as np
+from numpy import array
 
 def ler_csv(caminho):
     #= Cria um dataframe lido a partir do csv
@@ -7,10 +7,10 @@ def ler_csv(caminho):
 
     #= Separa as colunas do dataframe em arrays
     try:
-        x = np.array(df['x'], dtype=float)
-        y = np.array(df['y'], dtype=float)
-        err_x = np.array(df['err_x'], dtype=float)
-        err_y = np.array(df['err_y'], dtype=float)
+        x = array(df['x'], dtype=float)
+        y = array(df['y'], dtype=float)
+        err_x = array(df['err_x'], dtype=float)
+        err_y = array(df['err_y'], dtype=float)
     except ValueError:
         raise ValueError
 
@@ -39,10 +39,10 @@ def ler_excel(texto):
     except ValueError:
         raise ValueError
 
-    return (np.array(x, dtype=float),
-    np.array(y, dtype=float),
-    np.array(err_x, dtype=float),
-    np.array(err_y, dtype=float))
+    return (array(x, dtype=float),
+    array(y, dtype=float),
+    array(err_x, dtype=float),
+    array(err_y, dtype=float))
 
 def validar_pontos(pontos_erros):
 
@@ -63,7 +63,7 @@ def validar_pontos(pontos_erros):
     except ValueError:
         raise ValueError
 
-    return (np.array(x, dtype=float),
-    np.array(y, dtype=float),
-    np.array(err_x, dtype=float),
-    np.array(err_y, dtype=float))
+    return (array(x, dtype=float),
+    array(y, dtype=float),
+    array(err_x, dtype=float),
+    array(err_y, dtype=float))
