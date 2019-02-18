@@ -21,8 +21,6 @@ class Fit_curve:
                     recebe_x_erro[i],recebe_x_erro[j]=recebe_x_erro[j],recebe_x_erro[i]
                     recebe_y_erro[i],recebe_y_erro[j]=recebe_y_erro[j],recebe_y_erro[i]
 
-
-        
         #coloca os valores em suas devidas variáveis locais
         self.xdata = recebe_x
         self.ydata = recebe_y
@@ -121,17 +119,43 @@ class Fit_racional(Fit_curve):
     def __init__(self,recebe_x,recebe_y,recebe_x_erro,recebe_y_erro):#construtor da classe
         super().__init__(recebe_x,recebe_y,recebe_x_erro,recebe_y_erro)#chama o construtor da classe Fit_curve
         self.model = Model(self.funcao) #cria uma classe model com a função racional
-    
+
     def funcao(self,parametros,x):#retorna A/(X+B)
-        return parametros[0]/(parametros[1]+x)
+        return parametros[0]*np.power((parametros[1]+x),-1)
     
     def funcao2(self,x,a,b):#mesma função, parametros trocados. a função odr só aceita o primeiro método e a função fit_curve só aceita os segundo
-        return a/(x+b)
-    
+        return a*np.power((x+b),-1)
+
+    def mesmo_sinal(self):
+        for i in range(1,self.xdata.size):
+            if float(self.ydata[0]*self.ydata[i]) < abs(float(self.ydata[0]*self.ydata[i])):
+                return i
+        return self.xdata.size
+
+
     def gerar_qui_quadrado(self):
-        return super().gerar_qui_quadrado(np.array([1,1]),self.funcao,self.funcao2)#retorna o qui quadrado da classe Fit_curve com o vetor ajustado para função racional
+        verificar = self.mesmo_sinal()
+        if verificar == self.xdata.size:
+            return super().gerar_qui_quadrado(np.array([1,1]),self.funcao,self.funcao2)#retorna o qui quadrado da classe Fit_curve com o vetor ajustado para função racional
+        else:#a função odr e curve_fit tem um serio problema em achar parametros para a função racional,
+             #Isso porque é muito dificil prever quando a f(x) = A/0 sem ter os parametros, foi resolvido a seguinte maneira
+             #Caso exista uma mudança de sinal em f(x) durante os pontos dados a função separa em antes do sinal e depois
+            aux1 = Fit_racional(np.copy(self.xdata[:verificar]),#aux1 recebe a função antes da mudança de sinal
+                                np.copy(self.ydata[:verificar]),
+                                np.copy(self.x_erro[:verificar]),
+                                np.copy(self.y_erro[:verificar]))
+            aux2 = Fit_racional(np.copy(self.xdata[verificar:]),#aux2 recebe a função depois da mudança de sinal
+                                np.copy(self.ydata[verificar:]),
+                                np.copy(self.x_erro[verificar:]),
+                                np.copy(self.y_erro[verificar:]))
+            param1,erro1,qui1 = aux1.gerar_qui_quadrado()#ambas as partes sao parametrizadas e geram seus respectivos A e B
+            param2,erro2,qui2 = aux2.gerar_qui_quadrado()
+            qui_real1 = chisquare(self.ydata,self.funcao(param1,self.xdata))#ambas as partes sao testadas para ver qual das duas possui o qui quadrado mais proximo de 1
+            qui_real2 = chisquare(self.ydata,self.funcao(param2,self.xdata))
+            if abs(1.0-abs(qui_real1[1])) <= abs(1.0-abs(qui_real2[1])):
+                return super().gerar_qui_quadrado(param1,self.funcao,self.funcao2)#caso a primeira parte tenha o melhor resultado seus parametros são passados para um novo qui quadrado
+            else:
+                return super().gerar_qui_quadrado(param2,self.funcao,self.funcao2)#caso a segunda parte tenha o melhor resultado seus parametros são passados para um novo qui quadrado
 
 #====================================================
 
-#func = Fit_linear(np.array([173,168,188,158,161,193,163,178,183]),np.array([69,70,81,61,63,79,71,73,79]),np.zeros(9),np.zeros(9))
-#[173,168,188,158,161,193,163,178,183]

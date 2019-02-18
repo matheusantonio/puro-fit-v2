@@ -1,45 +1,69 @@
 from pandas import read_csv
 import numpy as np
 
-#Padrão:
-#X - erro x - y - erro y
 def ler_csv(caminho):
+    #= Cria um dataframe lido a partir do csv
     df = read_csv(caminho, names=['x','err_x', 'y', 'err_y'])
-    
+
+    #= Separa as colunas do dataframe em arrays
     try:
-        x = np.array(df['x'])
-        y = np.array(df['y'])
-        err_x = np.array(df['err_x'])
-        err_y = np.array(df['err_y'])
-    
+        x = np.array(df['x'], dtype=float)
+        y = np.array(df['y'], dtype=float)
+        err_x = np.array(df['err_x'], dtype=float)
+        err_y = np.array(df['err_y'], dtype=float)
     except ValueError:
-        x=[0]
-        y=[0]
-        err_x=[0]
-        err_y=[0]
+        raise ValueError
 
     return x, y, err_x, err_y
-
 
 def ler_excel(texto):
     x = []
     y = []
     err_x = []
     err_y = []
+    #= troca as vírgulas por pontos no texto e separa em várias
+    #= strings referente às linhas
     texto = texto.replace(',', '.')
-    l1 = texto.split('\n')
+    texto = texto.split('\n')
+    
+    #= Para cada linha no texto, separa os valores e os coloca nas
+    #= listas correspondentes
     try:
-        for i in l1:
-            l2 = i.split()
-            if(len(l2) != 0):
-                x.append(float(l2[0]))
-                y.append(float(l2[2]))
-                err_x.append(float(l2[1]))
-                err_y.append(float(l2[3]))
+        for i in texto:
+            valor = i.split()
+            if(len(valor) != 0):
+                x.append(float(valor[0]))
+                y.append(float(valor[2]))
+                err_x.append(float(valor[1]))
+                err_y.append(float(valor[3]))
     except ValueError:
-        x=[0]
-        y=[0]
-        err_x=[0]
-        err_y=[0]
+        raise ValueError
 
-    return x, y, err_x, err_y
+    return (np.array(x, dtype=float),
+    np.array(y, dtype=float),
+    np.array(err_x, dtype=float),
+    np.array(err_y, dtype=float))
+
+def validar_pontos(pontos_erros):
+
+    x = []
+    y = []
+    err_x = []
+    err_y = []
+
+    #= Recebe os widgets de texto, troca as vírgulas por pontos,
+    #= retira seu valor transformado em float e adicina às listas
+    #= correspondentes
+    try:
+        for i in range(0, len(pontos_erros), 4):
+            x.append(float(pontos_erros[i].get().replace(',','.')))
+            y.append(float(pontos_erros[i+1].get().replace(',','.')))
+            err_x.append(float(pontos_erros[i+2].get().replace(',','.')))
+            err_y.append(float(pontos_erros[i+3].get().replace(',','.')))
+    except ValueError:
+        raise ValueError
+
+    return (np.array(x, dtype=float),
+    np.array(y, dtype=float),
+    np.array(err_x, dtype=float),
+    np.array(err_y, dtype=float))
