@@ -1,9 +1,9 @@
-import tkinter as tk
-from tkinter import ttk
+from tkinter import Tk
+# from tkinter import ttk
 #=============================
 from j_inicial import TelaInicial
 
-janela = tk.Tk()
+janela = Tk()
 janela.resizable(False, False)
 TelaInicial(janela)
 janela.mainloop()

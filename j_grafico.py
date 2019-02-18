@@ -1,15 +1,16 @@
-import tkinter as tk
-from tkinter import ttk
+# import tkinter as tk
+from tkinter import Frame, Button, TOP, BOTTOM
+# from tkinter import ttk
 from tkinter import filedialog
 #======================================
 from functools import partial
 from fit import *
 #======================================
-import matplotlib
-matplotlib.use('TkAgg')
-import numpy as np
+from matplotlib import use
+use('TkAgg')
+from numpy import array
 from matplotlib.pyplot import savefig, gcf
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 #======================================
 
@@ -21,27 +22,27 @@ class TelaGrafico():
         self.janela = janela
 
         #=Frame feito para conter a imagem do plot========================
-        self.frm_graphic = tk.Frame(janela, bd=10, height=300, width=500)
-        self.frm_buttons = tk.Frame(janela, bd=10)
+        self.frm_graphic = Frame(janela, bd=10, height=300, width=500)
+        self.frm_buttons = Frame(janela, bd=10)
 
-        self.btn_return = tk.Button(self.frm_buttons, text="Voltar", command=self.voltar)
-        self.btn_plot = tk.Button(self.frm_buttons, text="Salvar", command = self.salvar_imagem)
+        self.btn_return = Button(self.frm_buttons, text="Voltar", command=self.voltar)
+        self.btn_plot = Button(self.frm_buttons, text="Salvar", command = self.salvar_imagem)
 
         #=====Botoes de ajuste=====
-        self.btn_linear = tk.Button(self.frm_buttons, text="Linear")
+        self.btn_linear = Button(self.frm_buttons, text="Linear")
         self.btn_linear["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_linear)
-        self.btn_expo = tk.Button(self.frm_buttons, text="Exponencial")
+        self.btn_expo = Button(self.frm_buttons, text="Exponencial")
         self.btn_expo["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_exponencial)
-        self.btn_quadra = tk.Button(self.frm_buttons, text="Quadrática")
+        self.btn_quadra = Button(self.frm_buttons, text="Quadrática")
         self.btn_quadra["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_quadrada)
-        self.btn_cube = tk.Button(self.frm_buttons, text="Cúbica")
+        self.btn_cube = Button(self.frm_buttons, text="Cúbica")
         self.btn_cube["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_cubica)
-        self.btn_racio = tk.Button(self.frm_buttons, text="Racional")
+        self.btn_racio = Button(self.frm_buttons, text="Racional")
         self.btn_racio["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_racional)
         #==========================
 
-        self.frm_graphic.pack(side=tk.TOP)
-        self.frm_buttons.pack(side=tk.BOTTOM)
+        self.frm_graphic.pack(side=TOP)
+        self.frm_buttons.pack(side=BOTTOM)
 
         self.btn_linear.grid(row=3,column=0)
         self.btn_expo.grid(row=3,column=1)
@@ -117,7 +118,7 @@ class TelaGrafico():
         self.grafico = self.fig.add_subplot(111)
         self.grafico.plot(x_teste, funct.funcao(popt, x_teste), "k", 
                     label = gerar_legenda())
-        self.grafico.errorbar(px, py, yerr=2*np.array(err_y), fmt='o' )
+        self.grafico.errorbar(px, py, yerr=2*array(err_y), fmt='o')
         self.grafico.legend(fontsize='x-small')
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.frm_graphic)
