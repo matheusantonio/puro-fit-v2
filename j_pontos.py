@@ -135,8 +135,6 @@ class TelaPontos():
         frm_btn.pack(side=BOTTOM)
         btn_cancel.pack(side=LEFT)
 
-        #= Criação & posicionamento
-        Button(frm_btn, text="OK", command=get_pontos).pack(side=RIGHT)
     
         #================================================================
         #= Função que valida o conteúdo da Text Entry e recebe os pontos
@@ -150,6 +148,9 @@ class TelaPontos():
             except ValueError:
                 messagebox.showwarning("Erro!", "Valores inseridos incorretamente")
         #==============================
+
+        #= Criação & posicionamento
+        Button(frm_btn, text="OK", command=get_pontos).pack(side=RIGHT)
 
     #==================================================================
     # Função para criar um novo conjunto de entradas para os pontos e erros
