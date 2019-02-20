@@ -1,5 +1,5 @@
 # import tkinter as tk
-from tkinter import Frame, Button, TOP, BOTTOM
+from tkinter import Frame, Button, TOP, BOTTOM, Toplevel, Entry, Label
 # from tkinter import ttk
 from tkinter import filedialog
 #======================================
@@ -125,7 +125,48 @@ class TelaGrafico():
         self.canvas.get_tk_widget().pack()
         self.canvas.draw()
 
+        self.resultados(popt, pcov, qui_quadrado)
+
     #==========================================================================
     def salvar_imagem(self):
         filename = filedialog.asksaveasfilename()
         self.fig.savefig(filename)
+
+    #==========================================================================
+    def resultados(self, popt, pcov, qui_quadrado):
+        top_res = Toplevel()
+        top_res.resizable(False, False)
+        top_res.title = "Resultados"
+
+        txt_a_value = Entry(top_res)
+        txt_a_value.insert(0, popt[0])
+        txt_a_value.config(state='readonly')
+        Label(top_res, text="A: ").grid(row=0, column=0)
+        txt_a_value.grid(row=0, column=1)
+
+        txt_b_value = Entry(top_res)
+        txt_b_value.insert(0, popt[1])
+        txt_b_value.config(state='readonly')
+        Label(top_res, text="B: ").grid(row=1, column=0)
+        txt_b_value.grid(row=1, column=1)
+        
+        if(len(popt) > 2):
+            txt_c_value = Entry(top_res)
+            txt_c_value.insert(0, popt[2])
+            txt_c_value.config(state='readonly')
+            Label(top_res, text="C: ").grid(row=2, column=0)
+            txt_c_value.grid(row=2, column=1)
+        
+            if(len(popt)>3):
+                txt_d_value=Entry(top_res)
+                txt_d_value.insert(0, popt[3])
+                txt_d_value.config(state='readonly')
+                Label(top_res, text="D: ").grid(row=3, column=0)
+                txt_d_value.grid(row=3, column=1)
+
+        txt_q_entry = Entry(top_res)
+        txt_q_entry.insert(0, qui_quadrado)
+        txt_q_entry.config(state='readonly')
+        Label(top_res, text="Q²: ").grid(row=4, column=0)
+        txt_q_entry.grid(row=4, column=1)
+
