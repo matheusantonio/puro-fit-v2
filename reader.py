@@ -3,7 +3,7 @@ from numpy import array
 
 def ler_csv(caminho):
     #= Cria um dataframe lido a partir do csv
-    df = read_csv(caminho, names=['x','err_x', 'y', 'err_y'])
+    df = read_csv(caminho, names=['x','y', 'err_x', 'err_y'])
 
     #= Separa as colunas do dataframe em arrays
     try:
@@ -33,8 +33,8 @@ def ler_excel(texto):
             valor = i.split()
             if(len(valor) != 0):
                 x.append(float(valor[0]))
-                y.append(float(valor[2]))
-                err_x.append(float(valor[1]))
+                y.append(float(valor[1]))
+                err_x.append(float(valor[2]))
                 err_y.append(float(valor[3]))
     except ValueError:
         raise ValueError
