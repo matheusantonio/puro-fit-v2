@@ -42,9 +42,6 @@ class TelaPontos():
 
         self.btn_fit = Button(self.frm_down, text="Ok", command= self.radio_choice)
         self.btn_cancel = Button(self.frm_down, text="Voltar", command = self.voltar)
-        
-        self.lb_pontos = Label(self.frm_upper, text="Pontos")
-        self.lb_filename = Label(self.frm_upper, text="None")
 
         self.radio_escolha_arquivo = Radiobutton(self.frm_radio, variable=self.opt, value=1, text="Arquivo")
         self.radio_escolha_texto = Radiobutton(self.frm_radio, variable=self.opt, value=2, text="Texto")
@@ -58,14 +55,9 @@ class TelaPontos():
         self.frm_upper.pack()
         self.frm_down.pack(side=BOTTOM)
         self.frm_radio.pack(side=RIGHT)
-
-        self.lb_pontos.pack(side=LEFT)
-        self.lb_filename.pack(side=RIGHT)
-
         self.radio_inserir_pontos.grid(row=0, column=3)
         self.radio_escolha_arquivo.grid(row=1, column=3)
         self.radio_escolha_texto.grid(row=2, column=3)
-
         self.btn_fit.grid(row=4, column=4)
         self.btn_cancel.grid(row=4, column=0)
         '''
@@ -88,9 +80,6 @@ class TelaPontos():
         self.frm_down.pack(side=BOTTOM)
         self.frm_radio.pack(side=RIGHT)
 
-        self.lb_pontos.pack(side=LEFT)
-        self.lb_filename.pack(side=RIGHT)
-
         self.radio_inserir_pontos.grid(row=0, column=3)
         self.radio_escolha_arquivo.grid(row=1, column=3)
         self.radio_escolha_texto.grid(row=2, column=3)
@@ -108,9 +97,6 @@ class TelaPontos():
         self.radio_escolha_texto.grid_forget()
         self.radio_inserir_pontos.grid_forget()
 
-        self.lb_pontos.pack_forget()
-        self.lb_filename.pack_forget()
-
         self.frm_radio.pack_forget()
         self.frm_upper.pack_forget()
         self.frm_down.pack_forget()
@@ -123,7 +109,7 @@ class TelaPontos():
     def get_by_text(self):
         top_txt = Toplevel()
         top_txt.resizable(False, False)
-        top_txt.title = "Pontos"
+        top_txt.title("Pontos")
 
         #= Criação de widgets
         txt_entry = Text(top_txt)
@@ -195,7 +181,7 @@ class TelaPontos():
     def janela_Inserir_Pontos(self):
         self.top_pontos = Toplevel()
         self.top_pontos.resizable(False, False)
-        self.top_pontos.title = "Pontos"
+        self.top_pontos.title("Pontos")
         
         self.tam=0
         self.labels = []

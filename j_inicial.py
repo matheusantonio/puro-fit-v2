@@ -12,7 +12,7 @@ class TelaInicial():
 
     #==================================================================
     def __init__(self, janela):
-        janela.title("Furo Pit")
+        janela.title("Puro Fit")
         self.janela = janela
 
         #=Criação e posicionamento de elementos da tela

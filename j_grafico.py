@@ -4,12 +4,12 @@ from tkinter import Frame, Button, TOP, BOTTOM, Toplevel, Entry, Label
 from tkinter import filedialog
 #======================================
 from functools import partial
-from fit import *
+from fit import Fit_linear, Fit_exponencial, Fit_quadrada, Fit_cubica, Fit_racional
 #======================================
 from matplotlib import use
 use('TkAgg')
 from numpy import array
-from matplotlib.pyplot import savefig, gcf
+from matplotlib.pyplot import savefig, gcf, style
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 #======================================
@@ -18,6 +18,9 @@ from matplotlib.figure import Figure
 class TelaGrafico():
     #==================================================================
     def __init__(self, janela, jAnterior, px, err_x, py, err_y):
+        
+        style.use("bmh")
+        
         self.jAnterior = jAnterior
         self.janela = janela
 
@@ -30,15 +33,15 @@ class TelaGrafico():
 
         #=====Botoes de ajuste=====
         self.btn_linear = Button(self.frm_buttons, text="Linear")
-        self.btn_linear["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_linear)
+        self.btn_linear["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_linear, "Linear")
         self.btn_expo = Button(self.frm_buttons, text="Exponencial")
-        self.btn_expo["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_exponencial)
+        self.btn_expo["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_exponencial, "Exponencial")
         self.btn_quadra = Button(self.frm_buttons, text="Quadrática")
-        self.btn_quadra["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_quadrada)
+        self.btn_quadra["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_quadrada, "Quadrática")
         self.btn_cube = Button(self.frm_buttons, text="Cúbica")
-        self.btn_cube["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_cubica)
+        self.btn_cube["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_cubica, "Cúbica")
         self.btn_racio = Button(self.frm_buttons, text="Racional")
-        self.btn_racio["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_racional)
+        self.btn_racio["command"] = partial(self.curve_plot, px, err_x, py, err_y, Fit_racional, "Racional")
         #==========================
 
         self.frm_graphic.pack(side=TOP)
@@ -99,7 +102,7 @@ class TelaGrafico():
         self.canvas.get_tk_widget().pack_forget()
 
     #==================================================================
-    def curve_plot(self, px, err_x, py, err_y, Funcao):
+    def curve_plot(self, px, err_x, py, err_y, Funcao, f_nome):
         funct = Funcao( px, py, err_x, err_y)        
         popt, pcov, qui_quadrado = funct.gerar_qui_quadrado()
 
@@ -125,7 +128,7 @@ class TelaGrafico():
         self.canvas.get_tk_widget().pack()
         self.canvas.draw()
 
-        self.resultados(popt, pcov, qui_quadrado)
+        self.resultados(popt, pcov, qui_quadrado, f_nome)
 
     #==========================================================================
     def salvar_imagem(self):
@@ -133,10 +136,10 @@ class TelaGrafico():
         self.fig.savefig(filename)
 
     #==========================================================================
-    def resultados(self, popt, pcov, qui_quadrado):
+    def resultados(self, popt, pcov, qui_quadrado, f_nome):
         top_res = Toplevel()
         top_res.resizable(False, False)
-        top_res.title = "Resultados"
+        top_res.title("Resultados: " + f_nome)
 
         txt_a_value = Entry(top_res)
         txt_a_value.insert(0, popt[0])
@@ -144,11 +147,23 @@ class TelaGrafico():
         Label(top_res, text="A: ").grid(row=0, column=0)
         txt_a_value.grid(row=0, column=1)
 
+        txt_a_error = Entry(top_res)
+        txt_a_error.insert(0, pcov[0])
+        txt_a_error.config(state='readonly')
+        Label(top_res, text="+/-").grid(row=0, column=2)
+        txt_a_error.grid(row=0, column=3)
+
         txt_b_value = Entry(top_res)
         txt_b_value.insert(0, popt[1])
         txt_b_value.config(state='readonly')
         Label(top_res, text="B: ").grid(row=1, column=0)
         txt_b_value.grid(row=1, column=1)
+
+        txt_b_error = Entry(top_res)
+        txt_b_error.insert(0, pcov[1])
+        txt_b_error.config(state='readonly')
+        Label(top_res, text="+/-").grid(row=1, column=2)
+        txt_b_error.grid(row=1, column=3)
         
         if(len(popt) > 2):
             txt_c_value = Entry(top_res)
@@ -156,6 +171,12 @@ class TelaGrafico():
             txt_c_value.config(state='readonly')
             Label(top_res, text="C: ").grid(row=2, column=0)
             txt_c_value.grid(row=2, column=1)
+
+            txt_c_error = Entry(top_res)
+            txt_c_error.insert(0, pcov[2])
+            txt_c_error.config(state='readonly')
+            Label(top_res, text="+/-").grid(row=2, column=2)
+            txt_c_error.grid(row=2, column=3)
         
             if(len(popt)>3):
                 txt_d_value=Entry(top_res)
@@ -163,6 +184,12 @@ class TelaGrafico():
                 txt_d_value.config(state='readonly')
                 Label(top_res, text="D: ").grid(row=3, column=0)
                 txt_d_value.grid(row=3, column=1)
+
+                txt_d_error=Entry(top_res)
+                txt_d_error.insert(0, pcov[3])
+                txt_d_error.config(state='readonly')
+                Label(top_res, text="+/-").grid(row=3, column=2)
+                txt_d_error.grid(row=3, column=3)
 
         txt_q_entry = Entry(top_res)
         txt_q_entry.insert(0, qui_quadrado)
