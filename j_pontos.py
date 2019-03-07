@@ -122,9 +122,9 @@ class TelaPontos():
         #= (chamada ao clicar no botão)
         def get_pontos():
             self.txt_pontos = txt_entry.get("1.0", END)
-            top_txt.destroy()
             try:
                 self.px, self.py, self.sx, self.sy = ler_excel(self.txt_pontos) #método ler_excel do módulo reader
+                top_txt.destroy()
                 self.proxJanelaGrafico()
             except ValueError:
                 messagebox.showwarning("Erro!", "Valores inseridos incorretamente")
@@ -169,7 +169,7 @@ class TelaPontos():
         except ValueError:
             messagebox.showwarning("Erro!", "Valores inseridos incorretamente")
             
-        self.top_pontos.destroy()
+        #self.top_pontos.destroy()
 
     #======================================================
     #= Janela onde os pontos serão inseridos manualmente
