@@ -1,5 +1,3 @@
-# Esse código é de autoria do usuário https://github.com/MatheusOsorioCerqueira
-
 import numpy as np 
 from scipy.odr import ODR, Model, Data, RealData
 from scipy.stats import chisquare

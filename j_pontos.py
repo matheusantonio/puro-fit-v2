@@ -36,16 +36,14 @@ class TelaPontos():
         self.opt = IntVar()
 
         # Criação de widgets
-        self.frm_upper = Frame(janela)
-        self.frm_down = Frame(janela)
-        self.frm_radio = Frame(self.frm_upper)
+        self.texto = Label(self.janela, text = "Selecione o modo de entrada dos pontos.", bg = "azure2")
 
-        self.btn_fit = Button(self.frm_down, text="Ok", command= self.radio_choice)
-        self.btn_cancel = Button(self.frm_down, text="Voltar", command = self.voltar)
+        self.btn_fit = Button(self.janela, text="Ok", command= self.radio_choice, bg = "LightSkyBlue4", width = 5)
+        self.btn_cancel = Button(self.janela, text="Voltar", command = self.voltar, bg = "LightSkyBlue4")
 
-        self.radio_escolha_arquivo = Radiobutton(self.frm_radio, variable=self.opt, value=1, text="Arquivo")
-        self.radio_escolha_texto = Radiobutton(self.frm_radio, variable=self.opt, value=2, text="Texto")
-        self.radio_inserir_pontos = Radiobutton(self.frm_radio, variable=self.opt, value=3, text="Inserir Pontos")
+        self.radio_escolha_arquivo = Radiobutton(self.janela, variable=self.opt, value=1, text="Arquivo",  bg = "azure2", width = 20, anchor="w")
+        self.radio_escolha_texto = Radiobutton(self.janela, variable=self.opt, value=2, text="Texto copiado do excel",  bg = "azure2", width = 20, anchor="w")
+        self.radio_inserir_pontos = Radiobutton(self.janela, variable=self.opt, value=3, text="Inserir pontos um a um",  bg = "azure2", width = 20, anchor="w")
         self.radio_inserir_pontos.select()
 
         #== Posicionamento de widgets
@@ -76,30 +74,26 @@ class TelaPontos():
     #==================================================================
     def redesenhar(self):
         # Posicionamento de widgets
-        self.frm_upper.pack()
-        self.frm_down.pack(side=BOTTOM)
-        self.frm_radio.pack(side=RIGHT)
+        self.janela.geometry("300x300+400+200")
+        self.texto.place(x=13, y=4)
 
-        self.radio_inserir_pontos.grid(row=0, column=3)
-        self.radio_escolha_arquivo.grid(row=1, column=3)
-        self.radio_escolha_texto.grid(row=2, column=3)
+        self.radio_inserir_pontos.place(x=53, y=30)
+        self.radio_escolha_arquivo.place(x=53, y=52)
+        self.radio_escolha_texto.place(x=53, y=74)
 
-        self.btn_fit.grid(row=4, column=4)
-        self.btn_cancel.grid(row=4, column=0)
+        self.btn_fit.place(x=150, y=260)
+        self.btn_cancel.place(x=80, y=260)
 
     #==================================================================
     def limparJanela(self):
         # Limpando os widgets
-        self.btn_fit.grid_forget()
-        self.btn_cancel.grid_forget()
-
-        self.radio_escolha_arquivo.grid_forget()
-        self.radio_escolha_texto.grid_forget()
-        self.radio_inserir_pontos.grid_forget()
-
-        self.frm_radio.pack_forget()
-        self.frm_upper.pack_forget()
-        self.frm_down.pack_forget()
+        self.texto.place_forget()
+        self.btn_fit.place_forget()
+        self.btn_cancel.place_forget()
+        self.texto.place_forget()
+        self.radio_escolha_arquivo.place_forget()
+        self.radio_escolha_texto.place_forget()
+        self.radio_inserir_pontos.place_forget()
 
     #==================================================================
     #==================================================================
@@ -110,11 +104,12 @@ class TelaPontos():
         top_txt = Toplevel()
         top_txt.resizable(False, False)
         top_txt.title("Pontos")
+        top_txt.configure(background="azure2")
 
         #= Criação de widgets
         txt_entry = Text(top_txt)
         frm_btn = Frame(top_txt)
-        btn_cancel = Button(frm_btn, text="Cancelar", command=top_txt.destroy)
+        btn_cancel = Button(frm_btn, text="Cancelar", command=top_txt.destroy, bg = "LightSkyBlue4")
         
         #= Posicionamento de widgets
         txt_entry.pack()
@@ -136,19 +131,19 @@ class TelaPontos():
         #==============================
 
         #= Criação & posicionamento
-        Button(frm_btn, text="OK", command=get_pontos).pack(side=RIGHT)
+        Button(frm_btn, text="OK", command=get_pontos, bg = "LightSkyBlue4").pack(side=RIGHT)
 
     #==================================================================
     # Função para criar um novo conjunto de entradas para os pontos e erros
     def append_labels(self, janela):
 
-        self.labels.append(Label(janela, text="X"))
+        self.labels.append(Label(janela, text="X", background="azure2"))
         self.labels[-1].grid(row=self.tam, column =0) 
-        self.labels.append(Label(janela, text="Y"))
+        self.labels.append(Label(janela, text="Y", background="azure2"))
         self.labels[-1].grid(row=self.tam, column =2)
-        self.labels.append(Label(janela, text="Erro X"))
+        self.labels.append(Label(janela, text="Erro X", background="azure2"))
         self.labels[-1].grid(row=self.tam, column =4) 
-        self.labels.append(Label(janela, text="Erro Y"))
+        self.labels.append(Label(janela, text="Erro Y", background="azure2"))
         self.labels[-1].grid(row=self.tam, column =6)
         #==================================================
         self.inserts.append(Entry(janela, width=10))
@@ -182,18 +177,19 @@ class TelaPontos():
         self.top_pontos = Toplevel()
         self.top_pontos.resizable(False, False)
         self.top_pontos.title("Pontos")
+        self.top_pontos.configure(background="azure2")
         
         self.tam=0
         self.labels = []
         self.inserts = []
 
         #= Criação de widgets
-        frame_pontos = Frame(self.top_pontos, height=300, width=500, bd=10)
+        frame_pontos = Frame(self.top_pontos, height=300, width=500, bd=10, background="azure2")
 
-        btn_add = Button(self.top_pontos, text="Adicionar ponto")
-        btn_cancel = Button(self.top_pontos, text="Cancelar", command=self.top_pontos.destroy)
+        btn_add = Button(self.top_pontos, text="Adicionar ponto", bg = "LightSkyBlue4")
+        btn_cancel = Button(self.top_pontos, text="Cancelar", command=self.top_pontos.destroy, bg = "LightSkyBlue4", width=5)
         btn_add["command"] = partial(self.append_labels, frame_pontos)        
-        btn_ok = Button(self.top_pontos, text="Ok", command=self.salvar_pontos)
+        btn_ok = Button(self.top_pontos, text="Ok", command=self.salvar_pontos, bg = "LightSkyBlue4", width=5)
 
         #= Posicionamento de widgets
         frame_pontos.pack(side=TOP)
