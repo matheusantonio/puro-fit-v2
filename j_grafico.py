@@ -126,7 +126,7 @@ class TelaGrafico():
             legenda = ""
             for coef, err_coef, letra in zip(popt, pcov, ['A','B','C','D']):
                 legenda += letra + f" = {coef:.2f} +/- {err_coef:.2f}\n"
-            legenda += r'$\tilde{\chi}^2$ ='
+            legenda += r'$\chi^2$/ndof ='
             legenda += f"{qui_quadrado:.2f}"
             return legenda
 
@@ -211,7 +211,7 @@ class TelaGrafico():
         txt_q_entry = Entry(top_res)
         txt_q_entry.insert(0, round(qui_quadrado, 4))
         txt_q_entry.config(state='readonly')
-        Label(top_res, text=r'$\tilde{\chi}^2$:', bg = "azure2").grid(row=4, column=0)
+        Label(top_res, text="x²/ndof: ", bg = "azure2").grid(row=4, column=0)
         
         txt_q_entry.grid(row=4, column=1)
 
