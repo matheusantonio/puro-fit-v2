@@ -1,5 +1,5 @@
 # import tkinter as tk
-from tkinter import Frame, Button, TOP, BOTTOM, Toplevel, Entry, Label
+from tkinter import Frame, Button, TOP, BOTTOM, Toplevel, Entry, Label, BOTH
 # from tkinter import ttk
 from tkinter import filedialog
 #======================================
@@ -12,7 +12,7 @@ from numpy import array
 from matplotlib.pyplot import savefig, gcf, style, xlabel, ylabel, rc
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
-#rc('text', usetex=True)
+rc('text', usetex=True)
 #======================================
 
 #==================================================================
@@ -126,8 +126,8 @@ class TelaGrafico():
             legenda = ""
             for coef, err_coef, letra in zip(popt, pcov, ['A','B','C','D']):
                 legenda += letra + f" = {coef:.2f} +/- {err_coef:.2f}\n"
-            #legenda += r'$\tilde{\chi}^2$'
-            legenda += f"Q² = {qui_quadrado:.2f}"
+            legenda += r'$\tilde{\chi}^2$ ='
+            legenda += f"{qui_quadrado:.2f}"
             return legenda
 
         self.fig = Figure(figsize=(7,5))
@@ -211,8 +211,7 @@ class TelaGrafico():
         txt_q_entry = Entry(top_res)
         txt_q_entry.insert(0, round(qui_quadrado, 4))
         txt_q_entry.config(state='readonly')
-        #Label(top_res, text=r'$\tilde{\chi}^2$: ', bg = "azure2").grid(row=4, column=0)
-        Label(top_res, text="Q²: ", bg = "azure2").grid(row=4, column=0)
+        Label(top_res, text=r'$\tilde{\chi}^2$:', bg = "azure2").grid(row=4, column=0)
         
         txt_q_entry.grid(row=4, column=1)
 
