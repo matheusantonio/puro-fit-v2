@@ -1,5 +1,8 @@
 # import tkinter as tk
 from tkinter import IntVar, Frame, Label, Button, TOP, BOTTOM, LEFT, RIGHT, Radiobutton, Toplevel, Text, END, Entry
+
+from tooltip import ToolTip
+
 # from tkinter import ttk
 from tkinter import filedialog
 from tkinter import messagebox
@@ -8,6 +11,8 @@ from functools import partial
 from reader import ler_csv, ler_excel, validar_pontos
 #======================================
 from j_grafico import TelaGrafico
+
+
 
 #==================================================================
 #=Tela utilizada para a inserção de pontos.
@@ -46,9 +51,13 @@ class TelaPontos():
         self.radio_inserir_pontos = Radiobutton(self.janela, variable=self.opt, value=3, text="Inserir pontos um a um",  bg = "azure2", width = 20, anchor="w")
         self.radio_inserir_pontos.select()
 
+        self.tip = Label(self.janela, text="?", bg="LightSkyBlue4", width=3)
+        
         #== Posicionamento de widgets
         self.redesenhar()
-        
+
+        ToolTip(self.tip, "Mensagem a ser exibida.\nNova linha da mensagem.\nAqui vai mais uma.")
+
         '''
         self.frm_upper.pack()
         self.frm_down.pack(side=BOTTOM)
@@ -76,6 +85,7 @@ class TelaPontos():
         # Posicionamento de widgets
         self.janela.geometry("300x300+400+200")
         self.texto.place(x=13, y=4)
+        self.tip.place(x=250, y=4)
 
         self.radio_inserir_pontos.place(x=53, y=30)
         self.radio_escolha_arquivo.place(x=53, y=52)
@@ -88,6 +98,7 @@ class TelaPontos():
     def limparJanela(self):
         # Limpando os widgets
         self.texto.place_forget()
+        self.tip.place_forget()
         self.btn_fit.place_forget()
         self.btn_cancel.place_forget()
         self.texto.place_forget()
