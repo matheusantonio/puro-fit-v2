@@ -46,9 +46,9 @@ class TelaPontos():
         self.btn_fit = Button(self.janela, text="Ok", command= self.radio_choice, bg = "LightSkyBlue4", width = 5)
         self.btn_cancel = Button(self.janela, text="Voltar", command = self.voltar, bg = "LightSkyBlue4")
 
-        self.radio_escolha_arquivo = Radiobutton(self.janela, variable=self.opt, value=1, text="Arquivo",  bg = "azure2", width = 20, anchor="w")
-        self.radio_escolha_texto = Radiobutton(self.janela, variable=self.opt, value=2, text="Texto copiado do excel",  bg = "azure2", width = 20, anchor="w")
-        self.radio_inserir_pontos = Radiobutton(self.janela, variable=self.opt, value=3, text="Inserir pontos um a um",  bg = "azure2", width = 20, anchor="w")
+        self.radio_escolha_arquivo = Radiobutton(self.janela, variable=self.opt, value=1, text="Arquivo",  bg = "azure2", width = 14, anchor="w")
+        self.radio_escolha_texto = Radiobutton(self.janela, variable=self.opt, value=2, text="Copiar do excel",  bg = "azure2", width = 14, anchor="w")
+        self.radio_inserir_pontos = Radiobutton(self.janela, variable=self.opt, value=3, text="Valores",  bg = "azure2", width = 14, anchor="w")
         self.radio_inserir_pontos.select()
 
         self.tip = Label(self.janela, text="?", bg="LightSkyBlue4", width=3)
@@ -56,7 +56,7 @@ class TelaPontos():
         #== Posicionamento de widgets
         self.redesenhar()
 
-        ToolTip(self.tip, "Mensagem a ser exibida.\nNova linha da mensagem.\nAqui vai mais uma.")
+        ToolTip(self.tip, "Valores: Insere um ponto de cada vez\nArquivo: Lê um arquivo csv.\nCopiar do excel: Lê os valores copiados das tabelas de um arquivo Excel\n\nObs: Todos em todas as opções de entrada os pontos devem ser colocados\nno formato: X, Y, Erro de X, Erro de Y.")
 
         '''
         self.frm_upper.pack()
@@ -83,16 +83,17 @@ class TelaPontos():
     #==================================================================
     def redesenhar(self):
         # Posicionamento de widgets
-        self.janela.geometry("300x300+400+200")
+        self.janela.geometry("325x300+400+200")
         self.texto.place(x=13, y=4)
-        self.tip.place(x=250, y=4)
+        self.tip.place(x=287, y=4)
 
-        self.radio_inserir_pontos.place(x=53, y=30)
-        self.radio_escolha_arquivo.place(x=53, y=52)
-        self.radio_escolha_texto.place(x=53, y=74)
+        tam=90
+        self.radio_inserir_pontos.place(x=tam, y=30)
+        self.radio_escolha_arquivo.place(x=tam, y=52)
+        self.radio_escolha_texto.place(x=tam, y=74)
 
-        self.btn_fit.place(x=150, y=260)
-        self.btn_cancel.place(x=80, y=260)
+        self.btn_fit.place(x=161, y=260)
+        self.btn_cancel.place(x=91, y=260)
 
     #==================================================================
     def limparJanela(self):
@@ -119,8 +120,8 @@ class TelaPontos():
 
         #= Criação de widgets
         txt_entry = Text(top_txt)
-        frm_btn = Frame(top_txt)
-        btn_cancel = Button(frm_btn, text="Cancelar", command=top_txt.destroy, bg = "LightSkyBlue4")
+        frm_btn = Frame(top_txt, bd=10, bg="azure2")
+        btn_cancel = Button(frm_btn, text="Cancelar", command=top_txt.destroy, bg = "LightSkyBlue4", width = 5)
         
         #= Posicionamento de widgets
         txt_entry.pack()
@@ -142,7 +143,7 @@ class TelaPontos():
         #==============================
 
         #= Criação & posicionamento
-        Button(frm_btn, text="OK", command=get_pontos, bg = "LightSkyBlue4").pack(side=RIGHT)
+        Button(frm_btn, text="OK", command=get_pontos, bg = "LightSkyBlue4", width = 5).pack(side=RIGHT)
 
     #==================================================================
     # Função para criar um novo conjunto de entradas para os pontos e erros
@@ -177,6 +178,7 @@ class TelaPontos():
         try:
             self.px, self.py, self.sx, self.sy = validar_pontos(self.inserts)
             self.proxJanelaGrafico()
+            self.top_pontos.destroy()
         except ValueError:
             messagebox.showwarning("Erro!", "Valores inseridos incorretamente")
             
@@ -185,7 +187,7 @@ class TelaPontos():
     #======================================================
     #= Janela onde os pontos serão inseridos manualmente
     def janela_Inserir_Pontos(self):
-        self.top_pontos = Toplevel()
+        self.top_pontos = Toplevel(bd=10)
         self.top_pontos.resizable(False, False)
         self.top_pontos.title("Pontos")
         self.top_pontos.configure(background="azure2")

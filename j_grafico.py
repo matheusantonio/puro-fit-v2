@@ -10,7 +10,7 @@ from matplotlib import use
 use('TkAgg')
 from numpy import array
 from matplotlib.pyplot import savefig, gcf, style, xlabel, ylabel, rc
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 rc('text', usetex=True)
 #======================================
@@ -23,7 +23,7 @@ class TelaGrafico():
         style.use("bmh")
         
         self.jAnterior = jAnterior
-        self.janela = janela.geometry("500x700+200+0")
+        self.janela = janela.geometry("500x620+200+0")
 
         tam=8
         #=Frame feito para conter a imagem do plot========================
@@ -55,11 +55,8 @@ class TelaGrafico():
         self.btn_cube.grid(row=3,column=3)
         self.btn_racio.grid(row=3,column=4)
 
-        self.ocupar = Label(self.frm_buttons, bg = "azure2")
-        self.ocupar.grid(row=4, column = 0)
-
         self.btn_return.grid(row=5, column=0)
-        self.btn_plot.grid(row=5, column=4)
+        self.btn_plot.grid(row=5, column=1)
 
         #======================================================
         #=Código para desenhar o gráfico no frame da janela
@@ -99,8 +96,6 @@ class TelaGrafico():
         self.btn_cube.grid_forget()
         self.btn_racio.grid_forget()
 
-        self.ocupar.grid_forget()
-
         self.frm_buttons.pack_forget()
         self.frm_graphic.pack_forget()
 
@@ -121,7 +116,7 @@ class TelaGrafico():
         x_teste = range(int(px.min()),int(px.max())+1)
         
         self.limpar_grafico()
-
+        
         def gerar_legenda():
             legenda = ""
             for coef, err_coef, letra in zip(popt, pcov, ['A','B','C','D']):
@@ -129,7 +124,7 @@ class TelaGrafico():
             legenda += r'$\chi^2$/ndof ='
             legenda += f"{qui_quadrado:.2f}"
             return legenda
-
+        
         self.fig = Figure(figsize=(7,5))
         self.grafico = self.fig.add_subplot(111)
         self.grafico.plot(x_teste, funct.funcao(popt, x_teste), "k", 
@@ -153,7 +148,7 @@ class TelaGrafico():
 
     #==========================================================================
     def resultados(self, popt, pcov, qui_quadrado, f_nome):
-        top_res = Toplevel()
+        top_res = Toplevel(bd=10)
         top_res.resizable(False, False)
         top_res.title("Resultados: " + f_nome)
         top_res.configure(background="azure2")
