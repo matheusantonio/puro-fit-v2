@@ -12,7 +12,8 @@ from numpy import array
 from matplotlib.pyplot import savefig, gcf, style, xlabel, ylabel, rc
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-rc('text', usetex=True)
+from math import floor, ceil
+#rc('text', usetex=True)
 #======================================
 
 #==================================================================
@@ -113,8 +114,19 @@ class TelaGrafico():
         funct = Funcao( px, py, err_x, err_y)        
         popt, pcov, qui_quadrado = funct.gerar_qui_quadrado()
 
-        x_teste = range(int(px.min()),int(px.max())+1)
-        
+        #pra trocar pra versão float, basta comentar a linha abaixo
+        x_teste = range(int(floor(px.min())),int(ceil(px.max())+1))
+
+        '''
+        x_teste = []
+        d0 = px.min()
+
+        while d0 < px.max():
+            x_teste.append(d0)
+            d0 += 1
+        x_teste.append(px.max())
+
+        '''
         self.limpar_grafico()
         
         def gerar_legenda():
