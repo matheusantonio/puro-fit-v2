@@ -1,11 +1,14 @@
 from pandas import read_csv
 from numpy import array, sqrt
 
+def tratarRaizNegativa(num):
+    return sqrt(abs(num))
+
 def ler_csv(caminho):
     #= Cria um dataframe lido a partir do csv
     df = read_csv(caminho, names=['x','y', 'err_x', 'err_y'])
     df['err_x'].fillna(0, inplace=True)
-    df['err_y'].fillna(df['y'].apply(sqrt), inplace=True)
+    df['err_y'].fillna(df['y'].apply(tratarRaizNegativa), inplace=True)
 
     #= Separa as colunas do dataframe em arrays
     try:
@@ -45,7 +48,7 @@ def ler_excel(texto):
                 try:
                     err_y.append(float(valor[3]))
                 except IndexError:
-                    err_y.append(sqrt(y[-1]))
+                    err_y.append(tratarRaizNegativa(y[-1]))
 
     except ValueError:
         raise ValueError
@@ -77,7 +80,7 @@ def validar_pontos(pontos_erros):
 
             sy = pontos_erros[i+3].get()
             if(sy == ""):
-                sy = str(sqrt(y[-1]))
+                sy = str(tratarRaizNegativa(y[-1]))
 
             err_y.append(float(sy.replace(',','.')))
 

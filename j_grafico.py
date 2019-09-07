@@ -114,8 +114,12 @@ class TelaGrafico():
         funct = Funcao( px, py, err_x, err_y)        
         popt, pcov, qui_quadrado = funct.gerar_qui_quadrado()
 
+        #versão original
+        x_teste = range(int(px.min()),int(px.max())+1)
+
+
         #pra trocar pra versão float, basta comentar a linha abaixo
-        x_teste = range(int(floor(px.min())),int(ceil(px.max())+1))
+        #x_teste = range(int(floor(px.min())),int(ceil(px.max())+1))
 
         '''
         x_teste = []
