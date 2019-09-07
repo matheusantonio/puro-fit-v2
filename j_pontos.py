@@ -205,7 +205,7 @@ class TelaPontos():
         btn_ok = Button(self.top_pontos, text="Ok", command=self.salvar_pontos, bg = "LightSkyBlue4", width=5)
 
         #= Posicionamento de widgets
-        frame_pontos.pack(side=TOP)
+        frame_pontos.pack(side=BOTTOM)
 
         btn_add.pack(side = RIGHT)
         btn_ok.pack(side=LEFT)
@@ -228,7 +228,7 @@ class TelaPontos():
     #==================================================================
     #= Função para o método através do arquivo csv. Abre uma caixa que 
     #= solicita um arquivo e passa seu caminho para a função ler_csv
-    #= do módulo reader.
+    #= do módulo reader. 
     def get_File(self):
         filename = filedialog.askopenfilename(filetypes = [("arquivo csv","*.csv")])
         if filename:
