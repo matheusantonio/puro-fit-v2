@@ -145,7 +145,8 @@ class TelaGrafico():
         self.grafico = self.fig.add_subplot(111)
         self.grafico.plot(x_teste, funct.funcao(popt, x_teste), "k", 
                     label = gerar_legenda())
-        self.grafico.errorbar(px, py, yerr=2*array(err_y), fmt='o')
+        
+        self.grafico.errorbar(px, py, yerr=array(err_y), fmt='o')
         self.grafico.legend(fontsize='x-small')
         
         self.grafico.set_xlabel('x', labelpad=5)
